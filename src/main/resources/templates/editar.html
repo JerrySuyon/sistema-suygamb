@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Editar Producto</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-light">
+	<div class="container mt-5">
+	    <div class="card shadow border-0 rounded-4 p-4 mx-auto"
+	         style="max-width: 800px;">
+			 
+	        <h2 class="fw-bold mb-4">
+	            Editar Producto
+	        </h2>
+
+	        <form action="/actualizar" method="post">
+	            <input type="hidden"
+	                   name="id"
+	                   th:value="${producto.id}">
+
+	            <div class="row g-3">
+	                <div class="col-md-6">
+
+	                    <label class="fw-semibold">
+	                        Código *
+	                    </label>
+
+	                    <input type="text"
+	                           name="codigo"
+	                           th:value="${producto.codigo}"
+	                           class="form-control form-control-lg">
+	                </div>
+	                <div class="col-md-6">
+						
+	                    <label class="fw-semibold">
+	                        Nombre *
+	                    </label>
+
+	                    <input type="text"
+	                           name="nombre"
+	                           th:value="${producto.nombre}"
+	                           class="form-control form-control-lg">
+	                </div>
+	                <div class="col-md-4">
+	                    <label class="fw-semibold">
+	                        Cant. x Caja *
+	                    </label>
+
+	                    <input type="number"
+	                           name="cantidadCaja"
+	                           th:value="${producto.cantidadCaja}"
+	                           class="form-control form-control-lg">
+	                </div>
+	                <div class="col-md-4">
+	                    <label class="fw-semibold">
+	                        Cajas *
+	                    </label>
+
+	                    <input type="number"
+	                           name="cajas"
+	                           th:value="${producto.cajas}"
+	                           class="form-control form-control-lg">
+	                </div>
+	                <div class="col-md-4">
+
+	                    <label class="fw-semibold">
+	                        Stock *
+	                    </label>
+
+	                    <input type="number"
+	                           name="stock"
+	                           th:value="${producto.stock}"
+	                           class="form-control form-control-lg">
+	                </div>
+	                <div class="col-md-4">
+	                    <label class="fw-semibold">
+	                        Precio Compra *
+	                    </label>
+
+	                    <input type="number"
+	                           step="0.01"
+	                           name="precioCompra"
+	                           th:value="${producto.precioCompra}"
+	                           class="form-control form-control-lg">
+	                </div>
+	                <div class="col-md-4">
+	                    <label class="fw-semibold">
+	                        Precio Mayor *
+	                    </label>
+
+	                    <input type="number"
+	                           step="0.01"
+	                           name="precioMayor"
+	                           th:value="${producto.precioMayor}"
+	                           class="form-control form-control-lg">
+	                </div>
+	                <div class="col-md-4">
+	                    <label class="fw-semibold">
+	                        Precio Unidad *
+	                    </label>
+
+	                    <input type="number"
+	                           step="0.01"
+	                           name="precioUnidad"
+	                           th:value="${producto.precioUnidad}"
+	                           class="form-control form-control-lg">
+	                </div>
+	            </div>
+	            <div class="mt-4 d-flex gap-2">
+
+	                <a href="/"
+	                   class="btn btn-light px-4 py-2">
+
+	                    Cancelar
+
+	                </a>
+
+	                <button type="submit"
+	                        class="btn btn-primary px-4 py-2">
+
+	                    Guardar
+
+	                </button>
+	            </div>
+	        </form>
+	    </div>
+	</div>
+</body>
+</html>

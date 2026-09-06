@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+<meta charset="UTF-8">
+<title>Login - SUYGAMB</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+
+    min-height:100vh;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    background:
+    linear-gradient(
+    135deg,
+    #eef2ff,
+    #f8fafc);
+
+    font-family:'Segoe UI',sans-serif;
+}
+
+/* ===== FONDO CON LOGO DIFUMINADO ===== */
+
+body{
+    position:relative;
+    min-height:100vh;
+    overflow-x:hidden;
+}
+
+
+body::before{
+
+    content:"";
+
+    position:fixed;
+
+    top:50%;
+    left:50%;
+
+    width:900px;
+    height:900px;
+
+    background-image:url('/logo/Isotiopo_SuyGamb.png');
+
+    background-repeat:no-repeat;
+
+    background-position:center;
+
+    background-size:contain;
+
+    opacity:.05;
+
+    filter:blur(8px);
+
+    transform:translate(-50%,-50%);
+
+    z-index:-1;
+}
+/* TARJETA */
+
+.login-card{
+
+    width:420px;
+
+    background:white;
+
+    border-radius:24px;
+
+    padding:35px;
+
+    box-shadow:
+    0 10px 35px rgba(0,0,0,.12);
+}
+
+/* LOGO */
+
+.logo-container{
+
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.logo{
+
+    width:90px;
+    height:auto;
+}
+
+/* TITULOS */
+
+.login-title{
+
+    text-align:center;
+    font-weight:700;
+    font-size:36px;
+
+    margin-bottom:5px;
+}
+
+.login-subtitle{
+
+    text-align:center;
+    color:#64748b;
+
+    margin-bottom:25px;
+}
+
+/* INPUTS */
+
+.form-label{
+
+    font-weight:600;
+}
+
+.form-control{
+
+    height:52px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#f1f5f9;
+}
+
+.form-control:focus{
+
+    box-shadow:none;
+
+    background:#eef2ff;
+}
+
+/* RECORDAR */
+
+.extra-options{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-top:10px;
+    margin-bottom:20px;
+}
+
+.extra-options a{
+
+    text-decoration:none;
+}
+
+/* BOTON */
+
+.btn-login{
+
+    width:100%;
+    height:52px;
+
+    border:none;
+
+    border-radius:12px;
+
+    font-weight:600;
+
+    color:white;
+
+    background:
+    linear-gradient(
+    135deg,
+    #6366f1,
+    #8b5cf6);
+}
+
+.btn-login:hover{
+
+    opacity:.95;
+}
+
+/* ERROR */
+
+.alert{
+
+    border-radius:12px;
+}
+
+/* FOOTER */
+
+.footer{
+
+    text-align:center;
+
+    margin-top:20px;
+
+    color:#94a3b8;
+
+    font-size:14px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="login-card">
+
+    <div class="logo-container">
+
+        <img th:src="@{/logo/Isotiopo_SuyGamb.png}"
+             class="logo">
+
+    </div>
+
+    <h2 class="login-title">
+        SUYGAMB
+    </h2>
+
+    <p class="login-subtitle">
+        Inicia sesión para continuar
+    </p>
+
+    <div th:if="${error}"
+         class="alert alert-danger text-center">
+
+        Usuario o contraseña incorrectos
+
+    </div>
+
+    <form action="/login"
+          method="post">
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Usuario
+            </label>
+
+            <input type="text"
+                   name="username"
+                   class="form-control"
+                   placeholder="Ingrese usuario"
+                   required>
+
+        </div>
+
+        <div class="mb-3">
+
+            <label class="form-label">
+                Contraseña
+            </label>
+
+            <input type="password"
+                   name="password"
+                   class="form-control"
+                   placeholder="Ingrese contraseña"
+                   required>
+
+        </div>
+
+        <div class="extra-options">
+
+            <div>
+
+                <input type="checkbox">
+
+                Recordarme
+
+            </div>
+
+            <a href="#">
+                ¿Olvidaste tu contraseña?
+            </a>
+
+        </div>
+
+        <button type="submit"
+                class="btn-login">
+
+            Iniciar Sesión
+
+        </button>
+
+    </form>
+
+    <div class="footer">
+
+        © 2026 SUYGAMB S.A.C
+
+    </div>
+
+</div>
+
+</body>
+</html>

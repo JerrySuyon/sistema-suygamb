@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Ticket 80mm</title>
+<style>
+@page{size:80mm auto; margin:3mm;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Courier New',monospace;font-size:11px;color:#000;background:white;width:80mm;margin:auto;padding:4mm}
+.center{text-align:center}.bold{font-weight:bold}
+.line{border-top:1px dashed #000;margin:6px 0}
+.line-solid{border-top:1px solid #000;margin:6px 0}
+.small{font-size:9px;color:#333}
+.header h2{font-size:14px;margin:2px 0}
+.header p{font-size:10px;line-height:1.3}
+.comp{margin:6px 0;padding:6px;border:1px solid #000;text-align:center}
+.comp .type{font-size:12px;font-weight:bold}
+.comp .num{font-size:13px;font-weight:bold}
+.row{display:flex;justify-content:space-between}
+.table{width:100%;border-collapse:collapse;margin:6px 0}
+.table th{text-align:left;font-size:10px;border-bottom:1px solid #000;padding:3px 0}
+.table td{font-size:10px;padding:3px 0;vertical-align:top}
+.table .right{text-align:right}
+.totals .row{margin:2px 0;font-size:11px}
+.totals .total{font-size:13px;font-weight:bold;border-top:1px solid #000;padding-top:4px;margin-top:4px}
+.footer{margin-top:8px;font-size:9px}
+.btn{border:none;padding:11px 14px;border-radius:8px;font-weight:bold;cursor:pointer;text-decoration:none;display:block;width:100%;margin-bottom:8px;font-size:12px;text-align:center}
+.btn-black{background:black;color:white}
+.btn-green{background:#25D366;color:white}
+.btn-dark{background:#111827;color:white}
+@media screen{body{background:#f5f5f5}.ticket-paper{background:white;padding:8px;box-shadow:0 2px 10px rgba(0,0,0,.1)}}
+@media print{.no-print{display:none!important}body{width:auto}}
+</style>
+</head>
+<body>
+<div class="ticket-paper">
+<div class="header center">
+<h2>SUYGAMB S.A.C</h2>
+<p>RUC: 20616103424</p>
+<p>CAL. SILICIO MZ. T LT. 28 - SJL - LIMA</p>
+</div>
+<div class="comp">
+<div class="type" th:text="${venta.comprobante}">BOLETA</div>
+<div class="num" th:text="${venta.numeroComprobante}">B001-000001</div>
+<div class="small" th:text="${#temporals.format(venta.fecha,'dd/MM/yyyy HH:mm')}">18/07/2026 13:05</div>
+</div>
+<div>
+<div class="row"><span>Cliente:</span> <span class="bold" th:text="${venta.cliente}" style="max-width:45mm;text-align:right">Cliente</span></div>
+<div class="row"><span th:text="${venta.comprobante == 'FACTURA' ? 'RUC:' : 'DNI:'}">DNI:</span> <span th:text="${venta.comprobante == 'FACTURA' ? venta.ruc : venta.dni}">00000000</span></div>
+</div>
+<div class="line"></div>
+<table class="table">
+<thead><tr><th>CANT</th><th>DESC</th><th class="right">IMP</th></tr></thead>
+<tbody>
+<tr th:each="d : ${venta.detalles}">
+<td th:text="${d.cantidad}">1</td>
+<td>
+<span class="bold" th:text="${d.producto.codigo}">COD</span>
+<span th:text="${d.producto.nombre}">Nombre</span><br>
+<span class="small" th:text="(${d.precio == d.producto.precioMayor ? 'MAYOR' : 'UNIDAD'}) + ' S/' + ${#numbers.formatDecimal(d.precio,1,2)}">MAYOR S/0.00</span>
+</td>
+<td class="right" th:text="${#numbers.formatDecimal(d.subtotal,1,2)}">0.00</td>
+</tr>
+</tbody>
+</table>
+<div class="line"></div>
+<div class="totals">
+<div class="row"><span>SUBTOTAL:</span><span>S/ <span th:text="${#numbers.formatDecimal(venta.subtotal,1,2)}">0.00</span></span></div>
+<div class="row" th:if="${venta.comprobante == 'FACTURA'}"><span>IGV:</span><span>S/ <span th:text="${#numbers.formatDecimal(venta.igv,1,2)}">0.00</span></span></div>
+<div class="row total"><span>TOTAL:</span><span>S/ <span th:text="${#numbers.formatDecimal(venta.total,1,2)}">0.00</span></span></div>
+</div>
+<div class="line-solid"></div>
+<div class="footer center">
+<p class="bold">¡Gracias por su compra!</p>
+<p class="small">SUYGAMB S.A.C © 2026</p>
+</div>
+
+<div class="no-print" style="margin-top:14px;text-align:center">
+<button onclick="window.print()" class="btn btn-black">🖨 Imprimir Ticket Simple</button>
+<a th:href="@{/ticket/electronico/{id}(id=${venta.id})}" target="_blank" class="btn btn-dark">👁 Ver Boleta Electrónica</a>
+<button th:attr="data-id=${venta.id}" onclick="descargarBoleta(this)" class="btn btn-green">⬇️ Descargar Boleta Electrónica PDF</button>
+<a href="/ventas" style="color:#666;font-size:11px;display:inline-block;margin-top:6px">⬅ Volver a ventas</a>
+</div>
+</div>
+
+<script>
+function descargarBoleta(btn){
+    const id = btn.getAttribute('data-id');
+    // Abre la boleta electronica con parametro ?descargar=true para que descargue automatico
+    window.open('/ticket/electronico/' + id + '?descargar=true', '_blank');
+}
+</script>
+
+</body>
+</html>

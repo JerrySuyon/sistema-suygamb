@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Ranking de Productos</title>
+
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+
+	.modern-header{
+	    background:#f8fafc;
+	}
+	
+	.modern-header th{
+	    background:#f8fafc !important;
+	    color:#64748b !important;
+	    font-size:14px;
+	    font-weight:600;
+	    border:none !important;
+	    padding:18px;
+	}
+	
+	/* BOTON ELIMINAR */
+	.btn-delete{
+	    background:#fee2e2;
+	    color:#dc2626;
+	    border:none;
+	    width:40px;
+	    height:40px;
+	    border-radius:10px;
+	}
+	
+	.btn-delete:hover{
+	    background:#dc2626;
+	    color:white;
+	}
+	
+	/* DARK MODE */
+	body.dark-mode .modern-header th{
+	    background:#1f2d49 !important;
+	    color:#cbd5e1 !important;
+	}
+	
+	body.dark-mode .table tbody td{
+	    background:#071633 !important;
+	    color:white !important;
+	}
+	
+	body.dark-mode .table tbody tr:hover td{
+	    background:#102041 !important;
+	}
+	
+	body.dark-mode .text-primary{
+	    color:#60a5fa !important;
+	}
+	
+	/* SIDEBAR */
+	.sidebar{
+	    width:250px;
+	    min-height:100vh;
+	    background:#ffffff;
+	    padding:25px;
+	    border-right:1px solid #e5e7eb;
+	    position:fixed;
+	    left:0;
+	    top:0;
+	}
+	
+	/* CONTENIDO */
+	.contenido{
+	    margin-left:250px;
+	    width:calc(100% - 250px);
+	    padding:25px;
+	}
+	
+	/* MENU */
+	.menu-item{
+	    display:block;
+	    padding:12px;
+	    margin-bottom:10px;
+	    text-decoration:none;
+	    color:#1f2937;
+	    border-radius:10px;
+	}
+	
+	.menu-item:hover{
+	    background:#eef2ff;
+	}
+	
+	.active{
+	    background:#eef2ff;
+	    color:#6366f1;
+	    font-weight:bold;
+	}
+	
+	/* =========================
+	   MENU DARK MODE
+	========================= */
+	
+	body.dark-mode .menu-item{
+	    color:#ffffff !important;
+	    border-radius:10px;
+	}
+
+	body.dark-mode .menu-item:hover{
+	    background:#243552 !important;
+	    color:#ffffff !important;
+	}
+
+	/* BOTON ACTIVO */
+	body.dark-mode .menu-item.active{
+	    background:#312e81 !important;
+	    color:#a5b4fc !important;
+	    font-weight:bold;
+	}
+
+	/* BOTON ACTIVO */
+	
+	
+	/* TABLA */
+	.table td,
+	.table th{
+	    vertical-align:middle;
+	}
+	
+	.table td{
+	    text-align:center;
+	}
+	
+	/* TARJETAS DASHBOARD */
+	.dashboard-card{
+	    border:none;
+	    border-radius:18px;
+	    background:#ffffff;
+	    transition:.3s;
+	    height:160px;
+	}
+	
+	
+	.dashboard-card .card-body{
+	
+	    height:100%;
+	    display:flex;
+	    flex-direction:column;
+	    justify-content:center;
+	    align-items:center;
+	
+	    padding:15px;
+	
+	}
+	
+	
+	.dashboard-icon{
+	    font-size:28px;
+	    height:35px;
+	}
+	
+	.dashboard-title{	
+	    color:#6b7280;
+	    font-size:14px;
+	    font-weight:600;	
+	    height:25px;	
+	}
+	
+	.dashboard-value{
+	    font-size:28px;
+	    font-weight:bold;
+	    color:#111827;
+	    height:40px;
+	}
+	
+	/* ESPACIO FIJO PARA STOCK BAJO */
+	.stock-codigos{
+	    height:25px;
+	    margin-top:5px;
+	    overflow:hidden;
+	}
+
+	/* ICONO */
+	.dashboard-icon{
+	    font-size:28px;
+	    margin-bottom:10px;
+	}
+	
+	/* TITULO */
+	.dashboard-title{
+	    color:#6b7280;
+	    font-size:14px;
+	    font-weight:600;
+	    margin-bottom:10px;
+	}
+	
+	/* NUMERO */
+	.dashboard-value{
+	    font-size:28px;
+	    font-weight:bold;
+	    color:#111827;
+	}
+	
+	/* CODIGOS STOCK BAJO */
+	.stock-codigos{
+	    min-height:20px;
+	    margin-top:10px;
+	}
+	
+	/* STOCK CRITICO */
+	.stock-item{
+	    background:#f3f4f6;
+	    border-radius:12px;
+	}
+	
+	body.dark-mode .stock-item{
+	    background:#102041 !important;
+	}
+	/* ESTO ES PARA EL BOTON DE BLANCO Y NEGRO  */
+	body.dark-mode .bg-white{
+	    background:#1f2937 !important;
+	    color:white !important;
+	}
+	body.dark-mode .card,
+	body.dark-mode .modal-content,
+	body.dark-mode .table,
+	body.dark-mode .bg-white{
+	    background:#1f2937 !important;
+	}
+	/* =========================================
+	   DARK MODE UNIFICADO
+	========================================= */
+
+	body.dark-mode{
+	    background:#1e2b45 !important;
+	    color:#ffffff !important;
+	}
+
+	/* SIDEBAR */
+
+	body.dark-mode .sidebar{
+	    background:#091633 !important;
+	    border-right:1px solid #243552 !important;
+	}
+
+	/* CONTENIDO */
+
+	body.dark-mode .contenido{
+	    background:#1e2b45 !important;
+	}
+
+	/* CARDS */
+
+	body.dark-mode .card,
+	body.dark-mode .dashboard-card{
+	    background:#071633 !important;
+	    border:1px solid #243552 !important;
+	    color:#ffffff !important;
+	    border-radius:18px;
+	}
+
+	/* HEADER CARDS */
+
+	body.dark-mode .card-header{
+	    background:#1f2d49 !important;
+	    color:#ffffff !important;
+	    border-bottom:1px solid #243552 !important;
+	}
+
+	/* TITULOS */
+
+	body.dark-mode h1,
+	body.dark-mode h2,
+	body.dark-mode h3,
+	body.dark-mode h4,
+	body.dark-mode h5,
+	body.dark-mode h6,
+	body.dark-mode label{
+		
+	    color:#ffffff !important;
+	}
+
+	/* DASHBOARD */
+
+	body.dark-mode .dashboard-title{
+	    color:#cbd5e1 !important;
+	}
+
+	body.dark-mode .dashboard-value{
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .dashboard-money{
+	    color:#60a5fa !important;
+	}
+
+	/* PRODUCTOS STOCK CRITICO */
+
+	body.dark-mode .card-body{
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .card-body h6{
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .card-body small{
+	    color:#cbd5e1 !important;
+	}
+
+	body.dark-mode hr{
+	    border-color:#243552 !important;
+	}
+
+	/* TABLAS */
+
+	body.dark-mode .table{
+	    background:#071633 !important;
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .table thead,
+	body.dark-mode .table thead tr{
+	    background:#1f2d49 !important;
+	}
+
+	body.dark-mode .table thead th{
+	    background:#1f2d49 !important;
+	    color:#cbd5e1 !important;
+	    border:none !important;
+	    padding:18px;
+	}
+
+	body.dark-mode .table tbody tr{
+	    background:#071633 !important;
+	}
+
+	body.dark-mode .table tbody td{
+	    background:#071633 !important;
+	    color:#ffffff !important;
+	    border-color:#243552 !important;
+	}
+
+	body.dark-mode .table tbody tr:hover td{
+	    background:#102041 !important;
+	}
+
+	/* INPUTS */
+
+	body.dark-mode .form-control,
+	body.dark-mode .form-select{
+	    background:#334155 !important;
+	    border:1px solid #475569 !important;
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .form-control::placeholder{
+	    color:#cbd5e1 !important;
+	}
+
+	/* MODALES */
+
+	body.dark-mode .modal-content{
+	    background:#071633 !important;
+	    border:1px solid #243552 !important;
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .modal-header{
+	    background:#1f2d49 !important;
+	    border-bottom:1px solid #243552 !important;
+	}
+
+	body.dark-mode .modal-body{
+	    background:#071633 !important;
+	}
+
+	body.dark-mode .btn-close{
+	    filter:invert(1);
+	}
+	/* BOTONES */
+
+		body.dark-mode .btn-edit{
+		    background:#312e81 !important;
+		    color:#a5b4fc !important;
+		}
+
+		body.dark-mode .btn-delete{
+		    background:#4c1d1d !important;
+		    color:#f87171 !important;
+		}
+
+		/* LINKS */
+
+		body.dark-mode .text-primary{
+		    color:#60a5fa !important;
+		}
+	
+		.stock-item{
+		    background:#f3f4f6;
+		}
+
+		body.dark-mode .stock-item{
+		    background:#102041 !important;
+		}
+		/* ESTO ES PARA EL BOTON DE BLANCO Y NEGRO  */
+		body.dark-mode .bg-white{
+		    background:#1f2937 !important;
+		    color:white !important;
+		}
+</style>
+</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<body class="bg-light">
+<div class="d-flex">
+
+    <!-- SIDEBAR -->
+	<div class="sidebar">
+        <div class="text-center mb-4">
+			
+            <img src="/logo/Isotiopo_SuyGamb.png"
+                 width="65">
+
+            <h5 class="fw-bold mt-2">
+                SUYGAMB
+            </h5>
+
+        </div>
+
+        <h3 class="fw-bold mb-4">
+            INVENTARIO
+        </h3>
+
+		<a href="/dashboard"
+		   class="menu-item"
+		   sec:authorize="hasRole('JEFE')">
+
+		    📊 Dashboard
+
+		</a>
+
+		<a href="/"
+		   class="menu-item"
+		   sec:authorize="hasRole('JEFE')">
+
+		    📦 Productos
+
+		</a>
+
+		<a href="/ventas"
+		   class="menu-item"
+		   sec:authorize="hasAnyRole('JEFE','EMPLEADO')">
+
+		    🛒 Ventas
+		</a>
+
+		<a href="/historial"
+		   class="menu-item"
+		   sec:authorize="hasRole('JEFE')">
+
+		    📄 Historial
+
+		</a>
+		<a href="/productos-mas-vendidos"
+		   class="menu-item active"
+		   sec:authorize="hasAnyRole('JEFE','EMPLEADO')">
+
+		    🏆 Ranking
+		</a>
+
+    </div>
+
+    <!-- CONTENIDO -->
+    <div class="contenido">
+
+        <!-- HEADER -->
+        <div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white shadow rounded">
+
+            <h3 class="fw-bold mb-0">
+                🏆 Ranking de Productos Más Vendidos
+            </h3>
+
+            <div>
+
+                <button id="themeToggle"
+                        class="btn btn-light border me-2">
+
+                    <i id="themeIcon"
+                       class="fa-solid fa-moon"></i>
+
+                </button>
+
+                <a href="/logout"
+                   class="btn btn-danger">
+
+                    Cerrar Sesión
+
+                </a>
+            </div>
+        </div>
+
+        <!-- TABLA -->
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+
+                <h5 class="fw-bold mb-0">
+                    📊 Ranking General
+                </h5>
+
+            </div>
+			
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="modern-header text-center">
+
+                            <tr>
+
+                                <th>#</th>
+                                <th>Código</th>
+                                <th>Producto</th>
+                                <th>Cantidad Vendida</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            <tr th:each="p, estado : ${ranking}">
+
+                                <td>
+
+                                    <span class="fw-bold"
+                                          th:text="${estado.count}">
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    <span class="fw-bold text-primary"
+                                          th:text="${p[0]}">
+                                    </span>
+
+                                </td>
+
+                                <td th:text="${p[1]}"></td>
+
+                                <td>
+
+                                    <span class="badge bg-success fs-6"
+                                          th:text="${p[2]}">
+                                    </span>
+
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <hr>
+
+                <a href="/dashboard"
+                   class="btn btn-secondary">
+
+                    ← Volver al Dashboard
+
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+const themeToggle =
+document.getElementById("themeToggle");
+
+const themeIcon =
+document.getElementById("themeIcon");
+
+/* CARGAR TEMA */
+
+if(localStorage.getItem("theme") === "dark"){
+
+    document.body.classList.add("dark-mode");
+
+    themeIcon.classList.remove("fa-moon");
+    themeIcon.classList.add("fa-sun");
+
+}
+
+/* CAMBIAR TEMA */
+
+themeToggle.addEventListener("click", function(){
+
+    document.body.classList.toggle("dark-mode");
+
+    if(document.body.classList.contains("dark-mode")){
+
+        localStorage.setItem("theme","dark");
+
+        themeIcon.classList.remove("fa-moon");
+        themeIcon.classList.add("fa-sun");
+
+    }else{
+
+        localStorage.setItem("theme","light");
+
+        themeIcon.classList.remove("fa-sun");
+        themeIcon.classList.add("fa-moon");
+
+    }
+
+});
+
+</script>
+</body>
+</html>

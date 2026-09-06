@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Boleta Electronica</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#111827;--accent:#dc2626;--blue:#2563eb;--gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-500:#6b7280;--gray-700:#374151;}
+*{font-family:'Inter',sans-serif;box-sizing:border-box}
+body{background:#eef2f7;margin:0;padding:24px 12px}
+.wrapper{max-width:900px;margin:auto}
+.card{background:white;border-radius:16px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.08);border:1px solid var(--gray-200)}
+.header{padding:26px 32px 20px;display:flex;justify-content:space-between;gap:20px;border-bottom:4px solid var(--primary)}
+.brand{display:flex;gap:14px;flex:1}
+.logo{width:60px;height:60px;background:#f0f7ff;border-radius:12px;padding:6px;border:1px solid #dbeafe;object-fit:contain}
+.empresa h2{margin:0 0 4px;font-size:21px;font-weight:800;color:var(--primary)}
+.empresa p{margin:2px 0;font-size:12px;color:var(--gray-700);line-height:1.4}
+.badge{display:inline-block;margin-top:6px;background:var(--gray-100);border:1px solid var(--gray-200);padding:3px 9px;border-radius:20px;font-size:10px;font-weight:700;color:var(--gray-500);text-transform:uppercase}
+.comp-box{min-width:210px;border:1.5px solid var(--gray-200);border-radius:12px;overflow:hidden;text-align:center}
+.comp-box .top{background:var(--gray-50);padding:7px;border-bottom:1px solid var(--gray-200);font-size:10px;font-weight:800;letter-spacing:.08em;color:var(--gray-500)}
+.comp-box .type{padding:9px 10px 2px;font-size:13px;font-weight:800;color:var(--accent);text-transform:uppercase}
+.comp-box .number{padding:0 10px 6px;font-size:17px;font-weight:800;color:var(--primary)}
+.comp-box .ruc{background:var(--primary);color:white;padding:5px;font-size:11px;font-weight:600}
+.content{padding:20px 32px 28px}
+.sec-title{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:0 0 10px;display:flex;align-items:center;gap:7px;color:var(--primary)}
+.sec-title::before{content:'';width:4px;height:13px;background:var(--blue);border-radius:2px;display:inline-block}
+.data-card{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:12px;padding:14px 16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 18px}
+.field label{display:block;font-size:9.5px;font-weight:700;letter-spacing:.06em;color:var(--gray-500);text-transform:uppercase;margin-bottom:3px}
+.field .val{background:white;border:1px solid var(--gray-200);border-radius:8px;padding:8px 11px;font-size:13px;font-weight:500;color:var(--primary);min-height:36px}
+.table-wrap{margin-top:6px;border:1px solid var(--gray-200);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{background:var(--primary);color:white;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:11px 13px;text-align:left}
+thead th.c{text-align:center}
+tbody td{padding:10px 13px;font-size:13px;border-bottom:1px solid #f3f4f6;color:var(--gray-700)}
+tbody tr:nth-child(even){background:#fbfcfd}
+.code{font-weight:700;color:var(--primary);font-size:12px}
+.name{color:var(--gray-500);font-size:11.5px}
+.badge-tipo{display:inline-block;padding:2px 7px;border-radius:6px;font-size:9.5px;font-weight:700;background:#e0f2fe;color:#0369a1;border:1px solid #bae6fd}
+.totales{display:flex;justify-content:flex-end;margin-top:18px}
+.tot-box{width:310px;border:1px solid var(--gray-200);border-radius:12px;overflow:hidden}
+.tot-box .r{display:flex;justify-content:space-between;padding:9px 15px;font-size:13px;border-bottom:1px solid #f3f4f6}
+.tot-box .r span:first-child{color:var(--gray-500);font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em}
+.tot-box .r.total{background:var(--primary);color:white;border:none;padding:13px 15px}
+.tot-box .r.total span{color:white;font-weight:800;font-size:14px}
+.footer{text-align:center;margin-top:22px;padding-top:14px;border-top:1px dashed var(--gray-200)}
+.footer h5{margin:0 0 3px;font-size:13px;font-weight:700;color:var(--primary)}
+.footer small{color:var(--gray-500);font-size:10.5px}
+@media print{@page{size:A4;margin:10mm}body{background:white;padding:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}.wrapper{max-width:100%}.card{box-shadow:none;border:none;border-radius:0}.no-print{display:none!important}thead th{background:#111827!important;color:white!important}.tot-box .r.total{background:#111827!important;color:white!important}}
+</style>
+</head>
+<body>
+<div class="wrapper"><div class="card" id="boletaPDF">
+<div class="header">
+<div class="brand">
+<img src="/logo/Isotiopo_SuyGamb.png" class="logo" onerror="this.style.display='none'">
+<div class="empresa">
+<h2>SUYGAMB S.A.C</h2>
+<p>CAL. CALLE SILICIO MZ. T LT. 28 - SJL - LIMA</p>
+<p><b>RUC:</b> 20616103424</p>
+<span class="badge">Ventas de articulo para el hogar y artesanía</span>
+<p style="margin-top:6px;font-size:11px;color:var(--gray-500)">Fecha: <b style="color:var(--primary)" th:text="${#temporals.format(venta.fecha,'dd/MM/yyyy HH:mm')}">18/07/2026 13:05</b></p>
+</div>
+</div>
+<div class="comp-box">
+<div class="top">COMPROBANTE ELECTRONICO</div>
+<div class="type" th:text="${venta.comprobante}">BOLETA</div>
+<div class="number" th:text="${venta.numeroComprobante}">B001-000001</div>
+<div class="ruc">RUC 20616103424</div>
+</div>
+</div>
+<div class="content">
+<div th:if="${venta.comprobante == 'BOLETA'}" style="margin-bottom:18px">
+<div class="sec-title">Datos del Cliente</div>
+<div class="data-card"><div class="grid">
+<div class="field"><label>Cliente</label><div class="val" th:text="${venta.cliente}">Cliente</div></div>
+<div class="field"><label>DNI</label><div class="val" th:text="${venta.dni}">DNI</div></div>
+</div></div>
+</div>
+<div th:if="${venta.comprobante == 'FACTURA'}" style="margin-bottom:18px">
+<div class="sec-title">Datos de Factura</div>
+<div class="data-card"><div class="grid">
+<div class="field"><label>Cliente</label><div class="val" th:text="${venta.cliente}">Cliente</div></div>
+<div class="field"><label>Razon Social</label><div class="val" th:text="${venta.razonSocial}">Razon</div></div>
+<div class="field"><label>RUC</label><div class="val" th:text="${venta.ruc}">RUC</div></div>
+<div class="field"><label>Direccion Fiscal</label><div class="val" th:text="${venta.direccionFiscal}">Dir</div></div>
+</div></div>
+</div>
+<div>
+<div class="sec-title">Detalle de Productos</div>
+<div class="table-wrap"><table>
+<thead><tr><th style="width:42%">Producto</th><th class="c">Cant</th><th class="c">Tipo</th><th class="c">Precio</th><th class="c">Subtotal</th></tr></thead>
+<tbody>
+<tr th:each="d : ${venta.detalles}">
+<td><div class="code" th:text="${d.producto.codigo}">COD</div><div class="name" th:text="${d.producto.nombre}">Nombre</div></td>
+<td style="text-align:center;font-weight:600" th:text="${d.cantidad}">1</td>
+<td style="text-align:center"><span class="badge-tipo" th:text="${d.precio == d.producto.precioMayor ? 'MAYOR' : 'UNIDAD'}">MAYOR</span></td>
+<td style="text-align:center">S/ <span th:text="${#numbers.formatDecimal(d.precio,1,2)}">0.00</span></td>
+<td style="text-align:center;font-weight:700">S/ <span th:text="${#numbers.formatDecimal(d.subtotal,1,2)}">0.00</span></td>
+</tr>
+</tbody>
+</table></div>
+</div>
+<div class="totales"><div class="tot-box">
+<div class="r"><span>Subtotal</span><span>S/ <span th:text="${#numbers.formatDecimal(venta.subtotal,1,2)}">0.00</span></span></div>
+<div class="r" th:if="${venta.comprobante == 'FACTURA'}"><span>IGV 18%</span><span>S/ <span th:text="${#numbers.formatDecimal(venta.igv,1,2)}">0.00</span></span></div>
+<div class="r total"><span>TOTAL</span><span>S/ <span th:text="${#numbers.formatDecimal(venta.total,1,2)}">0.00</span></span></div>
+</div></div>
+<div class="footer">
+<h5>¡Gracias por su compra!</h5>
+<small>SUYGAMB S.A.C © 2026 — Representacion impresa del comprobante electronico</small>
+</div>
+</div>
+</div>
+
+<div class="no-print" style="margin-top:16px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+<button onclick="descargarPDF()" style="background:#25D366;color:white;border:none;padding:11px 20px;border-radius:10px;font-weight:700;cursor:pointer">⬇️ Descargar PDF</button>
+<button onclick="window.print()" style="background:#111827;color:white;border:none;padding:11px 20px;border-radius:10px;font-weight:700;cursor:pointer">🖨 Guardar PDF / Imprimir</button>
+<a th:href="@{/ticket/simple/{id}(id=${venta.id})}" style="background:#f3f4f6;color:#374151;text-decoration:none;padding:11px 20px;border-radius:10px;font-weight:700;border:1px solid #e5e7eb">🧾 Ticket Simple</a>
+<a href="/ventas" style="background:#f3f4f6;color:#374151;text-decoration:none;padding:11px 20px;border-radius:10px;font-weight:700;border:1px solid #e5e7eb">Ventas</a>
+</div>
+</div>
+
+<script th:inline="javascript">
+function descargarPDF(){
+    const element = document.getElementById('boletaPDF');
+    const numero = /*[[${venta.numeroComprobante}]]*/ 'B001-000001';
+    const cliente = /*[[${venta.cliente}]]*/ 'CLIENTE';
+    const opt = {
+      margin: 5,
+      filename: numero + '_' + cliente + '_SUYGAMB.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+}
+
+// Si viene del boton del ticket simple con ?descargar=true, descarga solo
+window.onload = function(){
+    const urlParams = new URLSearchParams(window.location.search);
+    if(urlParams.get('descargar') === 'true'){
+        setTimeout(descargarPDF, 800);
+    }
+}
+</script>
+
+</body>
+</html>

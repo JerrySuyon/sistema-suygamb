@@ -1,0 +1,1437 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Sistema Ventas</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+
+	.modern-header{
+	    background:#f8fafc;
+	}
+	
+	.modern-header th{
+	    background:#f8fafc !important;
+	    color:#64748b !important;
+	    font-size:14px;
+	    font-weight:600;
+	    border:none !important;
+	    padding:18px;
+	}
+	
+	/* BOTON ELIMINAR */
+	.btn-delete{
+	    background:#fee2e2;
+	    color:#dc2626;
+	    border:none;
+	    width:40px;
+	    height:40px;
+	    border-radius:10px;
+	}
+	
+	.btn-delete:hover{
+	    background:#dc2626;
+	    color:white;
+	}
+	
+	/* DARK MODE */
+	body.dark-mode .modern-header th{
+	    background:#1f2d49 !important;
+	    color:#cbd5e1 !important;
+	}
+	
+	body.dark-mode .table tbody td{
+	    background:#071633 !important;
+	    color:white !important;
+	}
+	
+	body.dark-mode .table tbody tr:hover td{
+	    background:#102041 !important;
+	}
+	
+	body.dark-mode .text-primary{
+	    color:#60a5fa !important;
+	}
+	
+	/* SIDEBAR */
+	.sidebar{
+	    width:250px;
+	    min-height:100vh;
+	    background:#ffffff;
+	    padding:25px;
+	    border-right:1px solid #e5e7eb;
+	    position:fixed;
+	    left:0;
+	    top:0;
+	}
+	
+	/* CONTENIDO */
+	.contenido{
+	    margin-left:250px;
+	    width:calc(100% - 250px);
+	    padding:25px;
+	}
+	
+	/* MENU */
+	.menu-item{
+	    display:block;
+	    padding:12px;
+	    margin-bottom:10px;
+	    text-decoration:none;
+	    color:#1f2937;
+	    border-radius:10px;
+	}
+	
+	.menu-item:hover{
+	    background:#eef2ff;
+	}
+	
+	.active{
+	    background:#eef2ff;
+	    color:#6366f1;
+	    font-weight:bold;
+	}
+	
+	/* TABLA */
+	.table td,
+	.table th{
+	    vertical-align:middle;
+	}
+	
+	.table td{
+	    text-align:center;
+	}
+	
+	/* TARJETAS DASHBOARD */
+	.dashboard-card{
+	    border:none;
+	    border-radius:18px;
+	    background:#ffffff;
+	    min-height:190px;
+	}
+	
+	
+	.dashboard-card .card-body{
+	
+	    height:100%;
+	    display:flex;
+	    flex-direction:column;
+	    justify-content:center;
+	    align-items:center;
+	
+	    padding:12px;
+	
+	}
+	
+	
+	.dashboard-icon{
+	    font-size:28px;
+	    height:35px;
+	}
+	
+	.dashboard-title{	
+	    color:#6b7280;
+	    font-size:14px;
+	    font-weight:600;	
+	    height:25px;	
+	}
+	
+	.dashboard-value{
+	    font-size:28px;
+	    font-weight:bold;
+	    color:#111827;
+	    height:40px;
+	}
+	
+	/* ESPACIO FIJO PARA STOCK BAJO */
+	.stock-codigos{
+	    height:27px;
+	    margin-top:5px;
+	    overflow:hidden;
+	}
+	.stock-codigos .badge{
+	    font-size:14px;
+	    font-weight:700;
+	    padding:6px 15px;
+	}
+
+	/* ICONO */
+	.dashboard-icon{
+	    font-size:28px;
+	    margin-bottom:10px;
+	}
+	
+	/* TITULO */
+	.dashboard-title{
+	    color:#6b7280;
+	    font-size:14px;
+	    font-weight:600;
+	    margin-bottom:10px;
+	}
+	
+	/* NUMERO */
+	.dashboard-value{
+	    font-size:28px;
+	    font-weight:bold;
+	    color:#111827;
+	}
+	
+	/* CODIGOS STOCK BAJO */
+	.stock-codigos{
+	    min-height:20px;
+	    margin-top:10px;
+	}
+	
+	/* STOCK CRITICO */
+	.stock-item{
+	    background:#f3f4f6;
+	    border-radius:12px;
+	}
+	
+	body.dark-mode .stock-item{
+	    background:#102041 !important;
+	}
+	/* ESTO ES PARA EL BOTON DE BLANCO Y NEGRO  */
+	body.dark-mode .bg-white{
+	    background:#1f2937 !important;
+	    color:white !important;
+	}
+	body.dark-mode .card,
+	body.dark-mode .modal-content,
+	body.dark-mode .table,
+	body.dark-mode .bg-white{
+	    background:#1f2937 !important;
+	}
+	/* =========================================
+	   DARK MODE UNIFICADO
+	========================================= */
+
+	body.dark-mode{
+	    background:#1e2b45 !important;
+	    color:#ffffff !important;
+	}
+
+	/* SIDEBAR */
+
+	body.dark-mode .sidebar{
+	    background:#091633 !important;
+	    border-right:1px solid #243552 !important;
+	}
+
+	/* CONTENIDO */
+
+	body.dark-mode .contenido{
+	    background:#1e2b45 !important;
+	}
+
+	/* CARDS */
+
+	body.dark-mode .card,
+	body.dark-mode .dashboard-card{
+	    background:#071633 !important;
+	    border:1px solid #243552 !important;
+	    color:#ffffff !important;
+	    border-radius:18px;
+	}
+
+	/* HEADER CARDS */
+
+	body.dark-mode .card-header{
+	    background:#1f2d49 !important;
+	    color:#ffffff !important;
+	    border-bottom:1px solid #243552 !important;
+	}
+
+	/* TITULOS */
+
+	body.dark-mode h1,
+	body.dark-mode h2,
+	body.dark-mode h3,
+	body.dark-mode h4,
+	body.dark-mode h5,
+	body.dark-mode h6,
+	body.dark-mode label{
+		
+	    color:#ffffff !important;
+	}
+
+	/* DASHBOARD */
+
+	body.dark-mode .dashboard-title{
+	    color:#cbd5e1 !important;
+	}
+
+	body.dark-mode .dashboard-value{
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .dashboard-money{
+	    color:#60a5fa !important;
+	}
+
+	/* PRODUCTOS STOCK CRITICO */
+
+	body.dark-mode .card-body{
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .card-body h6{
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .card-body small{
+	    color:#cbd5e1 !important;
+	}
+
+	body.dark-mode hr{
+	    border-color:#243552 !important;
+	}
+
+	/* TABLAS */
+
+	body.dark-mode .table{
+	    background:#071633 !important;
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .table thead,
+	body.dark-mode .table thead tr{
+	    background:#1f2d49 !important;
+	}
+
+	body.dark-mode .table thead th{
+	    background:#1f2d49 !important;
+	    color:#cbd5e1 !important;
+	    border:none !important;
+	    padding:18px;
+	}
+
+	body.dark-mode .table tbody tr{
+	    background:#071633 !important;
+	}
+
+	body.dark-mode .table tbody td{
+	    background:#071633 !important;
+	    color:#ffffff !important;
+	    border-color:#243552 !important;
+	}
+
+	body.dark-mode .table tbody tr:hover td{
+	    background:#102041 !important;
+	}
+
+	/* INPUTS */
+
+	body.dark-mode .form-control,
+	body.dark-mode .form-select{
+	    background:#334155 !important;
+	    border:1px solid #475569 !important;
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .form-control::placeholder{
+	    color:#cbd5e1 !important;
+	}
+
+	/* MODALES */
+
+	body.dark-mode .modal-content{
+	    background:#071633 !important;
+	    border:1px solid #243552 !important;
+	    color:#ffffff !important;
+	}
+
+	body.dark-mode .modal-header{
+	    background:#1f2d49 !important;
+	    border-bottom:1px solid #243552 !important;
+	}
+
+	body.dark-mode .modal-body{
+	    background:#071633 !important;
+	}
+
+	body.dark-mode .btn-close{
+	    filter:invert(1);
+	}
+	/* BOTONES */
+
+		body.dark-mode .btn-edit{
+		    background:#312e81 !important;
+		    color:#a5b4fc !important;
+		}
+
+		body.dark-mode .btn-delete{
+		    background:#4c1d1d !important;
+		    color:#f87171 !important;
+		}
+
+		/* LINKS */
+
+		body.dark-mode .text-primary{
+		    color:#60a5fa !important;
+		}
+
+		body.dark-mode .menu-item{
+		    color:white !important;
+		}
+
+		body.dark-mode .menu-item:hover{
+		    background:#243552 !important;
+		}
+
+		body.dark-mode .active{
+		    background:#312e81 !important;
+		    color:#a5b4fc !important;
+		}
+		.stock-item{
+		    background:#f3f4f6;
+		}
+
+		body.dark-mode .stock-item{
+		    background:#102041 !important;
+		}
+		/* =========================
+		   MENU DARK MODE
+		========================= */
+
+		body.dark-mode .menu-item{
+		    color:#ffffff !important;
+		    border-radius:10px;
+		}
+
+		body.dark-mode .menu-item:hover{
+		    background:#243552 !important;
+		    color:#ffffff !important;
+		}
+
+		/* BOTON ACTIVO */
+		body.dark-mode .menu-item.active{
+		    background:#312e81 !important;
+		    color:#a5b4fc !important;
+		    font-weight:bold;
+		}
+		/* ESTO ES PARA EL BOTON DE BLANCO Y NEGRO  */
+		body.dark-mode .bg-white{
+		    background:#1f2937 !important;
+		    color:white !important;
+		}
+		.modal-bloqueo{
+
+		    position:fixed;
+
+		    inset:0;
+
+		    background:rgba(255,255,255,.65);
+
+		    backdrop-filter:blur(8px);
+
+		    display:flex;
+
+		    justify-content:center;
+
+		    align-items:center;
+
+		    z-index:9999;
+
+		}
+
+
+
+		.modal-card{
+
+		    width:420px;
+
+		    background:white;
+
+		    border-radius:20px;
+
+		    padding:40px;
+
+		    text-align:center;
+
+		    box-shadow:0 15px 40px rgba(0,0,0,.20);
+
+		}
+
+
+
+		.icono-bloqueo{
+
+		    font-size:50px;
+
+		    margin-bottom:15px;
+			
+		}
+		/* ERROR  */
+		.btn-close-sm {
+		    width: 0.7rem;
+		    height: 0.7rem;
+		    padding: 0.5rem;
+		    margin-top: 3px;
+		}
+		.alert .btn-close {
+		    top: 50%;
+		    transform: translateY(-50%);
+		    right: 12px;
+		}
+		
+</style>
+</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<body class="bg-light">
+	<div th:if="${param.bloqueado}"
+	     class="modal-bloqueo">
+	
+	    <div class="modal-card">
+	
+	        <div class="icono-bloqueo">
+	            🚫
+	        </div>
+	
+	        <h3>
+	            Acceso Bloqueado
+	        </h3>
+	
+	        <p>
+	            No tienes permisos para ingresar a este módulo.
+	        </p>
+	
+	
+	        <a href="/ventas"
+	           class="btn btn-primary">
+	
+	            Volver
+	
+	        </a>
+	    </div>
+	</div>
+	<div class="d-flex">
+	
+	    <!-- SIDEBAR -->
+
+	    <div class="sidebar">
+
+	        <div class="text-center mb-4">
+
+	            <img src="/logo/Isotiopo_SuyGamb.png"
+	                 width="65">
+
+	            <h5 class="fw-bold mt-2">
+	                SUYGAMB
+	            </h5>
+
+	        </div>
+
+	        <h3 class="fw-bold mb-4">
+	            INVENTARIO
+	        </h3>
+
+			<a href="/dashboard"
+			   class="menu-item"
+			   sec:authorize="hasRole('JEFE')">
+
+			    📊 Dashboard
+
+			</a>
+
+			<a href="/"
+			   class="menu-item"
+			   sec:authorize="hasRole('JEFE')">
+
+			    📦 Productos
+
+			</a>
+
+			<a href="/ventas"
+			   class="menu-item active"
+			   sec:authorize="hasAnyRole('JEFE','EMPLEADO')">
+
+			    🛒 Ventas
+			</a>
+
+			<a href="/historial"
+			   class="menu-item"
+			   sec:authorize="hasRole('JEFE')">
+
+			    📄 Historial
+
+			</a>
+			<a href="/productos-mas-vendidos"
+			   class="menu-item"
+			   sec:authorize="hasAnyRole('JEFE','EMPLEADO')">
+
+			    🏆 Ranking
+			</a>
+	    </div>
+	
+		<!-- CONTENIDO -->
+		<div class="contenido"> 
+		
+		    <!-- HEADER -->
+			<div class="d-flex justify-content-between align-items-center mb-4 p-3 bg-white shadow rounded">
+			    <h3 class="fw-bold mb-0">
+					💼 Panel Empleado Sistema Profesional de Ventas
+			    </h3>
+	
+			    <div>
+	
+			        <button id="themeToggle"
+			                class="btn btn-light border me-2">
+	
+			            <i id="themeIcon"
+			               class="fa-solid fa-moon"></i>
+	
+			        </button>
+	
+			        <a href="/logout"
+			           class="btn btn-danger">
+	
+			            Cerrar Sesión
+	
+			        </a>
+			    </div>
+			</div>
+			
+			<br>
+		    <!-- TARJETAS -->
+			<!-- PRODUCTOS -->
+			<div class="row g-3 mb-4">	
+			    <div class="col-xl col-lg-4 col-md-6">
+			        <div class="card dashboard-card shadow-sm">
+			            <div class="card-body text-center">
+			                <div class="dashboard-icon">
+			                    📦
+			                </div>
+		
+			                <div class="dashboard-title">
+			                    Productos
+			                </div>
+		
+			                <div class="dashboard-value"
+			                     th:text="${totalProductos}">
+			                </div>
+		
+			            </div>
+			        </div>
+			    </div>
+				
+				<!-- STOCK BAJO -->
+			    <div class="col-xl col-lg-4 col-md-6">
+			        <div class="card dashboard-card shadow-sm">
+			            <div class="card-body text-center">
+	
+			                <div class="dashboard-icon">
+			                    ⚠️
+			                </div>
+		
+			                <div class="dashboard-title">
+			                    Stock Bajo
+			                </div>
+		
+			                <div class="dashboard-value"
+			                     th:text="${stockBajo}">
+			                </div>
+		
+			                <div class="stock-codigos">
+		
+			                    <span th:each="p,iter : ${stockCritico}"
+			                          th:if="${iter.index < 2}"
+			                          class="badge bg-danger me-1"
+			                          th:text="${p.codigo}">
+			                    </span>
+		
+			                    <a th:if="${#lists.size(stockCritico) > 2}"
+			                       th:href="@{/dashboard#stock-critico}"
+			                       class="badge bg-dark text-decoration-none">
+		
+			                        +
+		
+			                        <span th:text="${#lists.size(stockCritico)-2}">
+			                        </span>
+		
+			                        más
+		
+			                    </a>
+		
+			                </div>
+			            </div>
+			        </div>
+			    </div>
+			</div>
+			
+		    <!-- ERROR -->
+			<div th:if="${error}"
+			     class="alert alert-danger alert-dismissible fade show mt-1 py-2">
+
+			    <strong th:text="${error}"></strong>
+
+			    <button type="button"
+			            class="btn-close"
+			            onclick="volverProductos()">
+			    </button>
+
+			</div>
+			
+		    <!-- BUSCADOR -->
+			<div class="card shadow-sm border-0 mb-4">
+			    <div class="card-body">
+			        <form method="get"
+			              action="/empleado">
+		
+			            <div class="input-group">
+
+			                <input type="text"
+			                       name="buscar"
+			                       class="form-control"
+			                       placeholder="🔍 Buscar producto...">
+		
+			                <button class="btn btn-primary">
+		
+			                    Buscar
+		
+			                </button>
+	
+			            </div>
+			        </form>
+			    </div>
+			</div>
+			
+			<!-- CARRITO -->
+			<div class="card shadow-sm border-0 mb-4">
+			    <div class="card-header">
+		
+			        <h4 class="fw-bold mb-0">
+			            🛒 Carrito
+			        </h4>
+		
+			    </div>
+			    <div class="card-body p-0">
+			        <div class="table-responsive">
+			            <table class="table table-hover align-middle mb-0">
+		
+			                <thead class="modern-header text-center">
+		
+			                    <tr>
+		
+			                        <th>Código</th>
+			                        <th>Producto</th>
+			                        <th>Cantidad</th>
+			                        <th>Precio</th>
+			                        <th>Subtotal</th>
+			                        <th>Acción</th>
+		
+			                    </tr>
+		
+			                </thead>
+		
+			                <tbody>
+		
+			                    <tr th:if="${#lists.isEmpty(carrito)}">
+		
+			                        <td colspan="6"
+			                            class="text-center py-4 text-muted">
+		
+			                            No hay productos en el carrito
+		
+			                        </td>
+		
+			                    </tr>
+		
+			                    <tr th:each="item, iter : ${carrito}">
+		
+			                        <td>
+		
+			                            <span class="fw-bold text-primary"
+			                                  th:text="${item.producto.codigo}">
+			                            </span>
+		
+			                        </td>
+		
+			                        <td class="fw-semibold"
+			                            th:text="${item.producto.nombre}">
+			                        </td>
+		
+			                        <td class="text-center fw-bold"
+			                            th:text="${item.cantidad}">
+			                        </td>
+		
+			                        <td class="text-center">
+		
+			                            S/
+			                            <span th:text="${#numbers.formatDecimal(item.precio,1,2)}"></span>
+		
+			                        </td>
+		
+			                        <td class="text-center fw-bold text-success">
+		
+			                            S/
+			                            <span th:text="${#numbers.formatDecimal(item.subtotal,1,2)}"></span>
+		
+			                        </td>
+		
+			                        <td class="text-center">
+		
+			                            <a th:href="@{/eliminar-carrito/{index}(index=${iter.index})}"
+			                               class="btn btn-delete">
+		
+			                                🗑
+		
+			                            </a>
+		
+			                        </td>
+			                    </tr>
+			                </tbody>
+			            </table>
+			        </div>
+			    </div>
+			</div>
+		    <!-- FORMULARIO -->
+			<div class="card shadow-sm border-0 mb-4">
+			    <div class="card-header">
+		
+			        <h4 class="fw-bold mb-0">
+			            💰 Realizar Venta
+			        </h4>
+		
+			    </div>
+			    <div class="card-body">
+			
+			        <!-- FORM AGREGAR -->
+			        <form action="/agregar-carrito"
+			              method="post">
+			            <div class="row g-3">
+							
+			                <!-- PRODUCTO -->
+			                <div class="col-md-3">
+		
+			                    <label class="fw-bold">
+			                        Producto
+			                    </label>
+			
+							   <input type="text"
+							   		  name="codigo"
+							          id="codigoProducto"
+							          class="form-control"
+							          placeholder="Ej: she-28cm"
+									  required>	
+			                </div>
+			
+			                <!-- CANTIDAD -->
+			                <div class="col-md-2">
+			
+			                    <label class="fw-bold">
+			                        Cantidad
+			                    </label>
+			
+								<input type="number"
+								       name="cantidad"
+								       min="1"
+								       class="form-control"
+								       required>
+			                </div>
+			
+			                <!-- TIPO VENTA -->
+			                <div class="col-md-2">
+			
+			                    <label class="fw-bold">
+			                        Tipo Venta
+			                    </label>
+			
+			                    <select name="tipoVenta"
+			                            class="form-control">
+			
+			                        <option value="UNIDAD">
+			                            UNIDAD
+			                        </option>
+			
+			                        <option value="MAYOR">
+			                            MAYOR
+			                        </option>
+			
+			                    </select>
+			                </div>
+			
+			                <!-- COMPROBANTE -->
+			                <div class="col-md-2">
+			
+			                    <label class="fw-bold">
+			                        Comprobante
+			                    </label>
+			
+								<select name="comprobante"
+								        id="comprobante"
+								        class="form-control">
+			
+								    <option value="BOLETA">
+								        BOLETA
+								    </option>
+			
+								    <option value="FACTURA">
+								        FACTURA
+								    </option>
+			
+								</select>
+			                </div>
+			
+			                <!-- GUIA -->
+			                <div class="col-md-2 d-flex align-items-end">
+			                    <div class="form-check">
+			
+			                        <input class="form-check-input"
+			                               type="checkbox"
+			                               id="checkGuia">
+			
+			                        <label class="form-check-label fw-bold">
+			
+			                            Generar Guía
+			
+			                        </label>
+			
+			                     </div>
+			                 </div>
+			            </div>
+			
+				            <!-- BOLETA -->
+		
+				            <div class="row g-3 mt-2" id="camposBoleta">
+				                <div class="col-md-3">
+				
+				                    <label class="fw-bold">
+				                        Cliente
+				                    </label>
+				
+				                    <input type="text"
+				                           id="cliente"
+				                           class="form-control">
+				                </div>
+				
+								<div class="col-md-4">
+								    <label class="fw-bold">
+								        DNI
+								    </label>
+		
+								    <div class="input-group">
+		
+								        <input type="text"
+								               id="dni"
+								               class="form-control"
+								               maxlength="8"
+								               pattern="[0-9]{8}"
+								               oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+		
+								        <button type="button"
+								                class="btn btn-primary"
+								                onclick="buscarCliente()">
+		
+								            Buscar
+		
+								        </button>
+		
+								    </div>
+								</div>
+				            </div>
+			
+				            <!-- FACTURA -->
+				            <div class="row g-3 mt-2"
+				                 id="camposFactura"
+								 style="display:none;">				 
+								 
+								 <div class="col-md-3">
+				
+									<label class="fw-bold">
+									   Cliente
+									</label>
+				
+				                    <input type="text"
+				                           id="clienteFactura"
+				                           class="form-control">
+				
+				                </div>
+				
+				                <div class="col-md-4">
+				
+				                    <label class="fw-bold">
+				                        Razón Social
+				                    </label>
+				
+				                    <input type="text"
+				                           id="razonSocial"
+				                           class="form-control">
+				                </div>
+				
+				                <div class="col-md-3">
+				
+				                    <label class="fw-bold">
+				                        RUC
+				                    </label>
+				
+									<input type="text"
+									       id="ruc"
+									       class="form-control"
+									       maxlength="11"
+									       pattern="[0-9]{11}"
+									       oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+				                </div>
+				
+				                <div class="col-md-5">
+		
+				                    <label class="fw-bold">
+				                        Dirección Fiscal
+				                    </label>
+				
+				                    <input type="text"
+				                           id="direccionFiscal"
+				                           class="form-control">
+				                </div>
+				            </div>
+				
+				            <!-- GUIA -->
+				            <div class="row g-3 mt-2"
+				                 id="camposGuia"
+				                 style="display:none;">
+								 
+				                <div class="col-md-4">
+				
+				                    <label class="fw-bold">
+				                        Dirección Entrega
+				                    </label>
+				
+				                    <input type="text"
+				                           id="direccionEntrega"
+				                           class="form-control">
+				                </div>
+				
+				                <div class="col-md-3">
+				
+				                    <label class="fw-bold">
+				                        Destinatario
+				                    </label>
+				
+				                    <input type="text"
+				                           id="destinatario"
+				                           class="form-control">
+				                </div>
+				
+				                <div class="col-md-2">
+				
+				                    <label class="fw-bold">
+				                        Agencia
+				                    </label>
+				
+				                    <input type="text"
+				                           id="agencia"
+				                           class="form-control">
+				                </div>
+				
+				                <div class="col-md-3">
+				
+				                    <label class="fw-bold">
+				                        Observación
+				                    </label>
+				
+				                    <input type="text"
+				                           id="observacion"
+				                           class="form-control">
+				                </div>
+				            </div>
+				            <div class="text-center mt-4">
+				
+								<button type="submit"
+								        class="btn btn-primary fw-bold px-4">
+				
+								    ➕ Agregar al Carrito
+				
+								</button>
+				
+				           </div>
+				     </form>
+			
+					<!-- FORM VENDER -->
+					        <div class="text-center mt-4">
+								<form action="/finalizar-venta"
+								      method="post"
+								      id="formVenta"
+								      target="_blank"
+								      onsubmit="setTimeout(() => { window.location.reload(); }, 800)">
+			
+					                <input type="hidden" name="cliente" id="inputCliente">
+					                <input type="hidden" name="dni" id="inputDni">
+					                <input type="hidden" name="razonSocial" id="inputRazonSocial">
+					                <input type="hidden" name="ruc" id="inputRuc">
+					                <input type="hidden" name="direccionFiscal" id="inputDireccionFiscal">
+					                <input type="hidden" name="comprobante" id="inputComprobante">
+					                <input type="hidden" name="guia" id="inputGuia">
+					                <input type="hidden" name="direccionEntrega" id="inputDireccionEntrega">
+					                <input type="hidden" name="destinatario" id="inputDestinatario">
+					                <input type="hidden" name="agencia" id="inputAgencia">
+					                <input type="hidden" name="observacion" id="inputObservacion">
+			
+					                <button type="submit"
+					                        class="btn btn-success w-100 fw-bold py-3">
+			
+					                    💰 Finalizar Venta
+			
+					                </button>
+			
+					            </form>
+					        </div>
+			   		 </div>
+	
+				<br>
+				<!-- TABLA PRODUCTOS -->
+				<div class="card shadow-sm border-0 mb-4">
+				    <div class="card-header">
+			
+				        <h4 class="fw-bold mb-0">
+				            📦 Productos Disponibles
+				        </h4>
+			
+				    </div>
+			
+				    <div class="card-body p-0">
+				        <div class="table-responsive">
+							<table class ="table table-hover align-middle">
+							    <thead class="modern-header text-center">
+			
+							        <tr>
+							            <th class="text-center">Código</th>
+							            <th class="text-center">Producto</th>
+							            <th class="text-center">Cant. x Caja</th>
+							            <th class="text-center">Cajas</th>
+							            <th class="text-center">Stock</th>
+										<th class="text-center">Estado</th>
+							            <th class="text-center">P. Mayor</th>
+							            <th class="text-center">P. Unidad</th>
+							        </tr>
+			
+							    </thead>
+			
+							    <tbody>
+			
+							        <tr th:each="p : ${productos}">
+			
+							            <td class="text-center fw-bold text-primary"
+							                th:text="${p.codigo}">
+							            </td>
+			
+							            <td class="text-center fw-semibold"
+							                th:text="${p.nombre}">
+							            </td>
+			
+							            <td class="text-center"
+							                th:text="${p.cantidadCaja}">
+							            </td>
+			
+							            <td class="text-center"
+							                th:text="${p.cajasCalculadas}">
+							            </td>
+			
+										<td>
+							                <span class="fw-bold fs-6"
+							                      th:text="${p.stock}">
+							                </span>
+							            </td>
+										<td>
+							                <span th:if="${p.stock == 0}"
+							                      class="badge bg-danger rounded-pill px-3 py-2">
+			
+							                    🔴 Agotado
+			
+							                </span>
+			
+							                <span th:if="${p.stock > 0 && p.stock <= 60}"
+							                      class="badge bg-warning text-dark rounded-pill px-3 py-2">
+			
+							                    🟡 Bajo
+			
+							                </span>
+			
+							                <span th:if="${p.stock > 60}"
+							                      class="badge bg-success rounded-pill px-3 py-2">
+			
+							                    🟢 Disponible
+			
+							                </span>
+			
+							            </td>
+			
+							            <td class="text-center">
+			
+							                S/
+							                <span th:text="${#numbers.formatDecimal(p.precioMayor,1,2)}"></span>
+			
+							            </td>
+			
+							            <td class="text-center">
+			
+							                S/
+							                <span th:text="${#numbers.formatDecimal(p.precioUnidad,1,2)}"></span>
+			
+							            </td>
+			
+							        </tr>
+			
+							    </tbody>
+							</table>
+				        </div>
+				    </div>
+				</div>
+			</div>
+		</div>
+		
+		<!-- MODAL REGISTRAR CLIENTE -->
+		<div class="modal fade"
+		     id="modalCliente"
+		     tabindex="-1">
+		
+		    <div class="modal-dialog modal-dialog-centered">
+			        <div class="modal-content">
+			            <div class="modal-header">
+			
+			                <h5 class="modal-title">
+			                    👤 Registrar Nuevo Cliente
+			                </h5>
+			
+			                <button type="button"
+			                        class="btn-close"
+			                        data-bs-dismiss="modal">
+			                </button>
+			
+			            </div>
+			
+			            <div class="modal-body">
+			
+			                <div class="mb-3">
+			
+			                    <label class="fw-bold">
+			                        DNI
+			                    </label>
+			
+			                    <input type="number"
+			                           id="dniModal"
+			                           class="form-control"
+			                           readonly>
+			
+			                </div>
+			
+			                <div class="mb-3">
+			
+			                    <label class="fw-bold">
+			                        Nombre Cliente
+			                    </label>
+			
+			                    <input type="text"
+			                           id="nombreModal"
+			                           class="form-control"
+			                           placeholder="Ingrese nombre completo">
+			
+			                </div>
+			
+			            </div>
+			
+			            <div class="modal-footer">
+			
+			                <button type="button"
+			                        class="btn btn-secondary"
+			                        data-bs-dismiss="modal">
+			                    Cancelar
+			                </button>
+			
+							<button type="button"
+							        class="btn btn-success"
+							        id="btnGuardarCliente"
+							        onclick="guardarCliente()">
+							    Guardar Cliente
+							</button>
+			
+			            </div>
+		           </div>
+	    	  </div>
+		 </div>
+	</div>
+
+<!-- SCRIPT -->
+
+<!-- 1. PRIMERO BOOTSTRAP -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- 2. TU SCRIPT DE COMPROBANTE Y GUIA -->
+<script>
+const comprobante = document.getElementById("comprobante");
+const camposBoleta = document.getElementById("camposBoleta");
+const camposFactura = document.getElementById("camposFactura");
+
+if(comprobante){
+    comprobante.addEventListener("change", function(){
+        if(this.value === "FACTURA"){
+            camposFactura.style.display = "flex";
+            camposBoleta.style.display = "none";
+        }else{
+            camposFactura.style.display = "none";
+            camposBoleta.style.display = "flex";
+        }
+    });
+}
+
+const checkGuia = document.getElementById("checkGuia");
+const camposGuia = document.getElementById("camposGuia");
+
+if(checkGuia){
+    checkGuia.addEventListener("change", function(){
+        camposGuia.style.display = this.checked ? "flex" : "none";
+    });
+}
+
+const formVenta = document.getElementById("formVenta");
+if(formVenta){
+    formVenta.addEventListener("submit", function(){
+        if(document.getElementById("comprobante").value === "FACTURA"){
+            document.getElementById("inputCliente").value = document.getElementById("clienteFactura").value;
+        }else{
+            document.getElementById("inputCliente").value = document.getElementById("cliente").value;
+        } 
+        document.getElementById("inputDni").value = document.getElementById("dni").value;
+        document.getElementById("inputRazonSocial").value = document.getElementById("razonSocial").value;
+        document.getElementById("inputRuc").value = document.getElementById("ruc").value;
+        document.getElementById("inputDireccionFiscal").value = document.getElementById("direccionFiscal").value;
+        document.getElementById("inputComprobante").value = document.getElementById("comprobante").value;
+        if(document.getElementById("checkGuia").checked){
+            document.getElementById("inputGuia").value = "SI";
+        }
+        document.getElementById("inputDireccionEntrega").value = document.getElementById("direccionEntrega").value;
+        document.getElementById("inputDestinatario").value = document.getElementById("destinatario").value;
+        document.getElementById("inputAgencia").value = document.getElementById("agencia").value;
+        document.getElementById("inputObservacion").value = document.getElementById("observacion").value;
+    });
+}
+
+// OCULTAR FACTURA AL INICIAR - FUERA DEL SUBMIT
+if(camposFactura && camposBoleta){
+    camposFactura.style.display = "none";
+    camposBoleta.style.display = "flex";
+}
+</script>
+
+<!-- 3. BUSQUEDA AUTOMATICA POR DNI -->
+<script>
+document.getElementById("dni")?.addEventListener("blur", function(){
+    let dni = this.value;
+    if(dni.length !== 8) return;
+    fetch("/buscar-cliente?dni=" + dni)
+    .then(response => {
+        if(!response.ok) throw new Error();
+        return response.json();
+    })
+    .then(cliente => {
+        if(cliente){
+            document.getElementById("cliente").value = cliente.nombre;
+        }
+    })
+    .catch(() => console.log("Cliente no encontrado"));
+});
+</script>
+
+<!-- 4. BUSCAR CLIENTE -->
+<script>
+function buscarCliente() {
+    let dni = document.getElementById("dni").value;
+    fetch("/buscar-cliente?dni=" + dni)
+    .then(response => response.text())
+    .then(data => {
+        if(data && data !== "null" && data !== "") {
+            let cliente = JSON.parse(data);
+            document.getElementById("cliente").value = cliente.nombre;
+        } else {
+            document.getElementById("dniModal").value = dni;
+            new bootstrap.Modal(document.getElementById("modalCliente")).show();
+        }
+    })
+    .catch(() => {
+        document.getElementById("dniModal").value = dni;
+        new bootstrap.Modal(document.getElementById("modalCliente")).show();
+    });
+}
+</script>
+
+<!-- 5. GUARDAR CLIENTE - CORREGIDO -->
+<script>
+function guardarCliente(){
+    let dni = document.getElementById("dniModal").value;
+    let nombre = document.getElementById("nombreModal").value;
+
+    if(dni.length != 8){
+        alert("DNI debe tener 8 digitos");
+        return;
+    }
+    if(nombre.trim() === ""){
+        alert("Ingresa el nombre");
+        return;
+    }
+
+    fetch("/guardar-cliente", {
+        method: "POST",
+        headers: {"Content-Type": "application/x-www-form-urlencoded"},
+        body: "dni=" + encodeURIComponent(dni) + "&nombre=" + encodeURIComponent(nombre)
+    })
+    .then(res => {
+        if(!res.ok) throw new Error("Error servidor " + res.status);
+        return res.json();
+    })
+    .then(cliente => {
+        document.getElementById("cliente").value = cliente.nombre;
+        document.getElementById("dni").value = cliente.dni;
+        bootstrap.Modal.getInstance(document.getElementById("modalCliente")).hide();
+        document.getElementById("nombreModal").value = "";
+    })
+    .catch(err => {
+        alert("Error al guardar cliente - Revisa consola");
+        console.log(err);
+    });
+}
+</script>
+
+<!-- 6. OTROS -->
+<script>
+document.querySelectorAll('a[href="#stock-critico"]').forEach(link => {
+    link.addEventListener('click', function(e){
+        e.preventDefault();
+        document.getElementById('stock-critico')?.scrollIntoView({behavior: 'smooth'});
+    });
+});
+
+const themeToggle = document.getElementById("themeToggle");
+const themeIcon = document.getElementById("themeIcon");
+if(localStorage.getItem("theme") === "dark"){
+    document.body.classList.add("dark-mode");
+    themeIcon?.classList.remove("fa-moon");
+    themeIcon?.classList.add("fa-sun");
+}
+themeToggle?.addEventListener("click", function(){
+    document.body.classList.toggle("dark-mode");
+    if(document.body.classList.contains("dark-mode")){
+        localStorage.setItem("theme","dark");
+        themeIcon.classList.remove("fa-moon");
+        themeIcon.classList.add("fa-sun");
+    }else{
+        localStorage.setItem("theme","light");
+        themeIcon.classList.remove("fa-sun");
+        themeIcon.classList.add("fa-moon");
+    }
+});
+
+function volverProductos(){
+    window.location.href = "/empleado";
+}
+</script>
+</body>
+
+</html>

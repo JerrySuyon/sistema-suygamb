@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+<meta charset="UTF-8">
+
+<title>Ticket Venta</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+
+body{
+    background:#f5f5f5;
+}
+
+.ticket{
+    max-width:900px;
+    margin:auto;
+    border-radius:15px;
+}
+
+.logo{
+    width:100px;
+}
+
+hr{
+    border-top:2px solid #ccc;
+}
+
+.table th{
+    background:#343a40 !important;
+    color:white !important;
+    text-align:center;
+}
+
+.table td{
+    vertical-align:middle;
+}
+
+.cabecera{
+    border-bottom:3px solid #0d6efd;
+	padding:10px;
+	margin-bottom:10px;
+}
+
+.comprobante-box{
+    border:2px solid #dc3545;
+    border-radius:8px;
+    padding:10px;
+    text-align:center;
+    min-width:160px;
+}
+.comprobante-box h4{
+    white-space:nowrap;
+}
+
+.total-box{
+    border-top:3px solid #198754;
+    padding-top:15px;
+}
+
+@media print{
+
+    @page{
+        size:A4;
+        margin:8mm;
+    }
+
+    body{
+        background:white;
+        font-size:11px;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .no-print{
+        display:none;
+    }
+
+    .card{
+        border:none !important;
+        box-shadow:none !important;
+    }
+
+    .ticket{
+       max-width:100%;
+    }
+	.form-control{
+	    padding:3px 6px !important;
+	    min-height:auto !important;
+	}
+		
+	.mb-3{
+	    margin-bottom:4px !important;
+	}
+
+	.mb-4{
+	     margin-bottom:8px !important;
+	}
+
+    h2,h3,h4,h5{
+	    margin-bottom:4px !important;
+	}
+	.table td,
+	.table th{
+	     padding:4px !important;
+	     font-size:11px;
+	}
+	
+}
+.cabecera{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+}
+
+.empresa{
+    width:70%;
+}
+
+.comprobante{
+    width:25%;
+}
+.guia-box{
+    font-size:11px;
+}
+
+table{
+    page-break-inside:auto;
+}
+
+tr{
+    page-break-inside:avoid;
+    page-break-after:auto;
+}
+.cabecera{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:20px;
+}
+
+.logo-ticket{
+
+	width: 90px;
+
+	    height: auto;
+
+	    object-fit: contain;
+
+	    margin-left: 80px; /* mueve a la derecha */
+
+	    margin-bottom: 10px;
+	
+}
+.ticket{
+    position: relative;
+}
+/*sirve para poner el logo de fondo en la hoja 
+.logo-ticket{
+width: 90px;
+
+ position: absolute;
+
+ top: 20px;
+
+ left: 120px;
+}*/
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container mt-3 mb-3">
+
+    <div class="card shadow-lg p-3 ticket">
+
+		<!-- LOGO -->
+		   <img src="/logo/Isotiopo_SuyGamb.png"
+		        alt="Logo"
+		        class="logo-ticket">
+				
+				
+		<!-- EMPRESA -->
+		<div class="row cabecera">
+			
+
+		    <div class="empresa">
+
+		        <h2 class="fw-bold">
+		            SUYGAMB S.A.C
+		        </h2>
+
+		        <p class="mb-1">Ventas de articulo para el hogar y artesanía</p>
+
+		        <p class="mb-1">RUC: 20616103424</p>
+
+		        <p class="mb-1">Dirección: CAL. CALLE SILICIO MZ. T LT. 28 P.PBLO JOVEN SAN HILARAION A SAN JUAN DE LURIGANCHO LIMA LIMA</p>
+
+		        <p class="mb-0">
+		            Fecha:
+		            <span th:text="${#temporals.format(
+		            venta.fecha,
+		            'dd/MM/yyyy HH:mm')}"></span>
+		        </p>
+
+		    </div>
+
+		    <div class="comprobante">
+
+		        <div class="comprobante-box">
+
+		            <h5 class="text-danger fw-bold">
+		                <span th:text="${venta.comprobante}"></span>
+		            </h5>
+
+		            <h4 class="fw-bold">
+		                <span th:text="${venta.numeroComprobante}"></span>
+		            </h4>
+
+		        </div>
+
+		    </div>
+
+		</div>
+
+        <!-- DATOS CLIENTE -->
+
+        <div class="mb-4">
+
+            <!-- FACTURA -->
+
+            <div th:if="${venta.comprobante == 'FACTURA'}">
+
+                <h4 class="text-danger fw-bold mb-3">
+                    DATOS FACTURA
+                </h4>
+
+                <div class="row">
+
+					<div class="col-md-6 mb-3">
+
+					     <label class="fw-bold">
+					       Cliente
+					     </label>
+ 
+					    <div class="form-control bg-light">
+
+					      <span th:text="${venta.cliente}"></span>
+
+					    </div>
+
+					</div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="fw-bold">
+                            Razón Social
+                        </label>
+
+                        <div class="form-control bg-light">
+
+                            <span th:text="${venta.razonSocial}"></span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="fw-bold">
+                            RUC
+                        </label>
+
+                        <div class="form-control bg-light">
+
+                            <span th:text="${venta.ruc}"></span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="fw-bold">
+                            Dirección Fiscal
+                        </label>
+
+                        <div class="form-control bg-light">
+
+                            <span th:text="${venta.direccionFiscal}"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BOLETA -->
+
+            <div th:if="${venta.comprobante == 'BOLETA'}">
+
+                <h4 class="text-success fw-bold mb-3">
+                    DATOS CLIENTE
+                </h4>
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="fw-bold">
+                            Cliente
+                        </label>
+
+                        <div class="form-control bg-light">
+
+                            <span th:text="${venta.cliente}"></span>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="fw-bold">
+                            DNI
+                        </label>
+
+                        <div class="form-control bg-light">
+
+                            <span th:text="${venta.dni}"></span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <hr>
+
+        <!-- GUIA -->
+
+        <div th:if="${venta.guia == 'SI'}"
+             class="guia-box">
+
+            <h4 class="text-primary fw-bold mb-3">
+                GUÍA DE REMISIÓN
+            </h4>
+
+            <div class="row">
+
+                <div class="col-md-3 mb-2">
+
+                    <label class="fw-bold">
+                        Dirección Entrega
+                    </label>
+
+                    <div class="form-control bg-light">
+
+                        <span th:text="${venta.direccionEntrega}"></span>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="fw-bold">
+                        Destinatario
+                    </label>
+
+                    <div class="form-control bg-light">
+
+                        <span th:text="${venta.destinatario}"></span>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="fw-bold">
+                        Agencia
+                    </label>
+
+                    <div class="form-control bg-light">
+
+                        <span th:text="${venta.agencia}"></span>
+
+                    </div>
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="fw-bold">
+                        Observación
+                    </label>
+
+                    <div class="form-control bg-light">
+
+                        <span th:text="${venta.observacion}"></span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <hr>
+
+        </div>
+
+        <!-- DETALLE -->
+
+		<div class="mb-4">
+
+		    <h4 class="fw-bold mb-3">
+
+		        DETALLE DE PRODUCTOS
+
+		    </h4>
+
+		    <table class="table table-bordered">
+
+		        <thead>
+
+		            <tr>
+
+						<th>Producto</th>
+						<th>Cantidad</th>
+						<th>Tipo Venta</th>
+						<th>Precio</th>
+						<th>Subtotal</th>
+
+		            </tr>
+
+		        </thead>
+
+		        <tbody>
+
+		            <tr th:each="d : ${venta.detalles}">
+
+						<td>
+
+						    <b th:text="${d.producto.codigo}"></b>
+						    <br>
+
+						    <span th:text="${d.producto.nombre}">
+						    </span>
+
+						</td>
+
+		                <td class="text-center"
+		                    th:text="${d.cantidad}">
+		                </td>
+						 
+						<td>
+
+						    <span th:if="${d.precio == d.producto.precioMayor}">
+						        MAYOR
+						    </span>
+
+						    <span th:if="${d.precio == d.producto.precioUnidad}">
+						        UNIDAD
+						    </span>
+
+						</td>
+
+		                <td class="text-center">
+
+		                    S/
+		                    <span th:text="${#numbers.formatDecimal(d.precio,1,2)}">
+		                    </span>
+
+		                </td>
+
+		                <td class="text-center">
+
+		                    S/
+		                    <span th:text="${#numbers.formatDecimal(d.subtotal,1,2)}">
+		                    </span>
+
+		                </td>
+
+		            </tr>
+
+		        </tbody>
+
+		    </table>
+
+		</div>
+
+        <hr>
+
+        <!-- TOTALES -->
+
+		<div class="row total-box">
+
+		    <div class="col-md-6">
+		    </div>
+
+		    <div class="col-md-6">
+
+		        <table class="table">
+
+		          
+					<tr>
+
+		                <th>Subtotal</th>
+
+		                <td class="text-end">
+
+		                    S/
+		                    <span th:text="${#numbers.formatDecimal(venta.subtotal,1,2)}">
+		                    </span>
+
+		                </td>
+
+		            </tr>
+
+		            <tr th:if="${venta.comprobante == 'FACTURA'}">
+
+		                <th>IGV (18%)</th>
+
+		                <td class="text-end">
+
+		                    S/
+							<span th:text="${#numbers.formatDecimal(venta.igv,1,2)}">
+							</span>
+
+		                </td>
+
+		            </tr>
+				
+
+		            <tr class="table-success">
+
+		                <th>TOTAL</th>
+
+		                <th class="text-end">
+
+		                    S/
+		                    <span th:text="${#numbers.formatDecimal(venta.total,1,2)}">
+		                    </span>
+
+		                </th>
+
+		            </tr>
+
+		        </table>
+
+		    </div>
+
+		</div>
+
+        <hr>
+
+		<div class="text-center mt-4">
+
+		    <h5 class="fw-bold">
+		        Gracias por su compra
+		    </h5>
+
+		    <small class="text-muted">
+		        SUYGAMB S.A.C © 2026
+		    </small>
+			<p class="text-center text-muted">
+				Sistema ERP de Ventas e Inventario
+			</p>
+
+		</div>
+
+        <!-- BOTONES -->
+
+		<div class="no-print">
+
+		    <button onclick="window.print()"
+		            class="btn btn-success btn-lg">
+
+		        🖨 Imprimir
+
+		    </button>
+
+		    <a href="/ventas"
+		       class="btn btn-secondary btn-lg">
+
+		        ⬅ Volver
+
+		    </a>
+
+		</div>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>
